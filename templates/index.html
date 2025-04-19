@@ -36,12 +36,12 @@
             flex: 1; /* Ocupa espaço igual */
             min-width: 250px; /* Largura mínima */
         }
-        form label, form input {
+        form label, form input, form select {
             display: block;
             margin-bottom: 10px;
             width: 95%;
         }
-        form input[type="text"], form input[type="number"] {
+        form input[type="text"], form input[type="number"], form input[type="date"], form select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -75,6 +75,17 @@
             border-radius: 4px;
             display: flex;
             justify-content: space-between;
+        }
+        li span {
+            margin-right: 10px; /* Add some spacing between elements */
+        }
+        li .categoria {
+            font-style: italic;
+            color: #555;
+        }
+        li .data {
+            font-size: 0.9em;
+            color: #777;
         }
         .saldo {
             text-align: center;
@@ -132,6 +143,12 @@
                     <label for="valor_receita">Valor (R$):</label>
                     <input type="text" id="valor_receita" name="valor" inputmode="decimal" placeholder="Ex: 50,00" required>
 
+                    <label for="cat_receita">Categoria:</label>
+                    <input type="text" id="cat_receita" name="categoria" placeholder="Ex: Salário, Venda">
+
+                    <label for="data_receita">Data:</label>
+                    <input type="date" id="data_receita" name="data"> <!-- Deixe em branco para hoje -->
+
                     <button type="submit">Adicionar Receita</button>
                 </form>
             </div>
@@ -146,6 +163,12 @@
                     <label for="valor_despesa">Valor (R$):</label>
                     <input type="text" id="valor_despesa" name="valor" inputmode="decimal" placeholder="Ex: 25,50" required>
 
+                    <label for="cat_despesa">Categoria:</label>
+                    <input type="text" id="cat_despesa" name="categoria" placeholder="Ex: Alimentação, Transporte">
+
+                    <label for="data_despesa">Data:</label>
+                    <input type="date" id="data_despesa" name="data"> <!-- Deixe em branco para hoje -->
+
                     <button type="submit">Adicionar Despesa</button>
                 </form>
             </div>
@@ -156,6 +179,8 @@
         <!-- Seção de Saldo -->
         <div class="saldo {{ 'negativo' if saldo < 0 else '' }}">
             Saldo Atual: R$ {{ "%.2f"|format(saldo|float) }}
+            <br>
+            <small>(Receitas: R$ {{ "%.2f"|format(total_receitas|float) }} | Despesas: R$ {{ "%.2f"|format(total_despesas|float) }})</small>
         </div>
 
         <hr>
@@ -167,7 +192,9 @@
                 <ul>
                     {% for receita in receitas %}
                         <li>
+                            <span class="data">{{ receita.data }}</span>
                             <span>{{ receita.descricao }}</span>
+                            <span class="categoria">({{ receita.categoria }})</span>
                             <span>R$ {{ "%.2f"|format(receita.valor|float) }}</span>
                         </li>
                     {% else %}
@@ -182,7 +209,9 @@
                 <ul>
                     {% for despesa in despesas %}
                         <li>
+                            <span class="data">{{ despesa.data }}</span>
                             <span>{{ despesa.descricao }}</span>
+                            <span class="categoria">({{ despesa.categoria }})</span>
                             <span>R$ {{ "%.2f"|format(despesa.valor|float) }}</span>
                         </li>
                     {% else %}

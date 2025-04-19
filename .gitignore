@@ -6,9 +6,9 @@ __pycache__/
 dados_financeiros.json
 
 # Arquivos de ambiente virtual (exemplos)
-# venv/
-# .venv/
-# env/
+venv/
+.env
+*.env
 
 # Arquivos de configuração de IDE/Editor (exemplos)
 # .vscode/
