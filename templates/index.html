@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .forms-section, .list-section {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Para responsividade */
+        }
+        .form-container, .list-container {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px;
+            flex: 1; /* Ocupa espaço igual */
+            min-width: 250px; /* Largura mínima */
+        }
+        form label, form input {
+            display: block;
+            margin-bottom: 10px;
+            width: 95%;
+        }
+        form input[type="text"], form input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        form button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #4cae4c;
+        }
+        #form-despesa button {
+            background-color: #d9534f;
+        }
+        #form-despesa button:hover {
+            background-color: #c9302c;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin-bottom: 5px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .saldo {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+            border-radius: 5px;
+        }
+        .saldo.negativo {
+             background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            color: #a94442;
+        }
+        .flash-messages {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .flash-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+        }
+        .flash-error {
+            color: #a94442;
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Controle Financeiro Pessoal</h1>
+
+        <!-- Mensagens Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-messages flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="forms-section">
+            <!-- Formulário para Adicionar Receita -->
+            <div class="form-container">
+                <h2>Adicionar Receita</h2>
+                <form id="form-receita" action="{{ url_for('add_receita') }}" method="post">
+                    <label for="desc_receita">Descrição:</label>
+                    <input type="text" id="desc_receita" name="descricao" required>
+
+                    <label for="valor_receita">Valor (R$):</label>
+                    <input type="text" id="valor_receita" name="valor" inputmode="decimal" placeholder="Ex: 50,00" required>
+
+                    <button type="submit">Adicionar Receita</button>
+                </form>
+            </div>
+
+            <!-- Formulário para Adicionar Despesa -->
+            <div class="form-container">
+                <h2>Adicionar Despesa</h2>
+                <form id="form-despesa" action="{{ url_for('add_despesa') }}" method="post">
+                    <label for="desc_despesa">Descrição:</label>
+                    <input type="text" id="desc_despesa" name="descricao" required>
+
+                    <label for="valor_despesa">Valor (R$):</label>
+                    <input type="text" id="valor_despesa" name="valor" inputmode="decimal" placeholder="Ex: 25,50" required>
+
+                    <button type="submit">Adicionar Despesa</button>
+                </form>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Seção de Saldo -->
+        <div class="saldo {{ 'negativo' if saldo < 0 else '' }}">
+            Saldo Atual: R$ {{ "%.2f"|format(saldo|float) }}
+        </div>
+
+        <hr>
+
+        <div class="list-section">
+            <!-- Lista de Receitas -->
+            <div class="list-container">
+                <h2>Receitas</h2>
+                <ul>
+                    {% for receita in receitas %}
+                        <li>
+                            <span>{{ receita.descricao }}</span>
+                            <span>R$ {{ "%.2f"|format(receita.valor|float) }}</span>
+                        </li>
+                    {% else %}
+                        <li>Nenhuma receita adicionada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Lista de Despesas -->
+            <div class="list-container">
+                <h2>Despesas</h2>
+                <ul>
+                    {% for despesa in despesas %}
+                        <li>
+                            <span>{{ despesa.descricao }}</span>
+                            <span>R$ {{ "%.2f"|format(despesa.valor|float) }}</span>
+                        </li>
+                    {% else %}
+                        <li>Nenhuma despesa adicionada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+# Dados financeiros locais
+dados_financeiros.json
+
+# Arquivos de ambiente virtual (exemplos)
+# venv/
+# .venv/
+# env/
+
+# Arquivos de configuração de IDE/Editor (exemplos)
+# .vscode/
+# .idea/
